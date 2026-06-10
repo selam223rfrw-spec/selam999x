@@ -6,9 +6,6 @@ import http from "http";
 import { fileURLToPath } from "url";
 import path from "path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const SITE_URL = "https://selam999x.lovable.app";
 const OUTPUT_FILE = "index-bundle.html";
 
@@ -46,13 +43,12 @@ function urlToDataUri(url, type = "application/octet-stream") {
   });
 }
 
-// ---------------- CSS INLINE ----------------
+// ---------------- FIX CSS ----------------
 async function inlineCSS(css, baseURL) {
   const urlRegex = /url\(([^)]+)\)/g;
 
   for (const match of css.matchAll(urlRegex)) {
     let raw = match[1].replace(/['"]/g, "");
-
     if (raw.startsWith("data:")) continue;
 
     try {
@@ -60,44 +56,44 @@ async function inlineCSS(css, baseURL) {
         ? raw
         : new URL(raw, baseURL).href;
 
-      const ext = raw.split(".").pop().toLowerCase();
-
       let type = "application/octet-stream";
-      if (["png"].includes(ext)) type = "image/png";
-      if (["jpg", "jpeg"].includes(ext)) type = "image/jpeg";
-      if (["svg"].includes(ext)) type = "image/svg+xml";
-      if (["woff2"].includes(ext)) type = "font/woff2";
-      if (["woff"].includes(ext)) type = "font/woff";
+      if (raw.includes(".png")) type = "image/png";
+      if (raw.includes(".jpg") || raw.includes(".jpeg")) type = "image/jpeg";
+      if (raw.includes(".svg")) type = "image/svg+xml";
+      if (raw.includes(".woff2")) type = "font/woff2";
 
       const data = await urlToDataUri(full, type);
-
       css = css.replace(match[0], `url("${data}")`);
-    } catch {}
+    } catch (err) {
+      console.log("⚠ CSS asset failed:", raw);
+    }
   }
 
   return css;
 }
 
-// ---------------- HTML INLINE ----------------
-async function inlineHTML(html, baseURL) {
-  // images
-  html = await html.replace(
-    /<img[^>]+src=["']([^"']+)["']/g,
-    async (m, src) => {
-      if (src.startsWith("data:")) return m;
+// ---------------- FIX HTML IMAGES (IMPORTANT FIX) ----------------
+async function inlineImages(html, baseURL) {
+  const imgRegex = /<img[^>]+src=["']([^"']+)["']/g;
 
-      try {
-        const full = src.startsWith("http")
-          ? src
-          : new URL(src, baseURL).href;
+  let matches = [...html.matchAll(imgRegex)];
 
-        const data = await urlToDataUri(full, "image/png");
-        return m.replace(src, data);
-      } catch {
-        return m;
-      }
+  for (const match of matches) {
+    let src = match[1];
+    if (src.startsWith("data:")) continue;
+
+    try {
+      const full = src.startsWith("http")
+        ? src
+        : new URL(src, baseURL).href;
+
+      const data = await urlToDataUri(full, "image/png");
+
+      html = html.replace(match[0], match[0].replace(src, data));
+    } catch (err) {
+      console.log("⚠ Image failed:", src);
     }
-  );
+  }
 
   return html;
 }
@@ -105,41 +101,42 @@ async function inlineHTML(html, baseURL) {
 // ---------------- MAIN ----------------
 async function run() {
   console.log("🚀 Fetching site...");
-
   let html = await fetchURL(SITE_URL);
 
   console.log("🎨 Inline CSS...");
-
   const cssRegex = /<link[^>]+rel=["']stylesheet["'][^>]*href=["']([^"']+)["'][^>]*>/g;
 
   for (const match of html.matchAll(cssRegex)) {
-    const url = match[1];
-    const full = url.startsWith("http") ? url : new URL(url, SITE_URL).href;
-
     try {
+      const url = match[1];
+      const full = url.startsWith("http") ? url : new URL(url, SITE_URL).href;
+
       let css = await fetchURL(full);
       css = await inlineCSS(css, SITE_URL);
 
       html = html.replace(match[0], `<style>${css}</style>`);
-    } catch {}
+    } catch (err) {
+      console.log("⚠ CSS failed:", match[1]);
+    }
   }
 
   console.log("⚡ Inline JS...");
-
   const jsRegex = /<script[^>]+src=["']([^"']+)["'][^>]*><\/script>/g;
 
   for (const match of html.matchAll(jsRegex)) {
-    const url = match[1];
-    const full = url.startsWith("http") ? url : new URL(url, SITE_URL).href;
-
     try {
+      const url = match[1];
+      const full = url.startsWith("http") ? url : new URL(url, SITE_URL).href;
+
       const js = await fetchURL(full);
       html = html.replace(match[0], `<script>${js}</script>`);
-    } catch {}
+    } catch (err) {
+      console.log("⚠ JS failed:", match[1]);
+    }
   }
 
   console.log("🖼 Inline images...");
-  html = await inlineHTML(html, SITE_URL);
+  html = await inlineImages(html, SITE_URL);
 
   fs.writeFileSync(OUTPUT_FILE, html);
 
