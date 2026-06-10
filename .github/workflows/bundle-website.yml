@@ -1,0 +1,37 @@
+name: Bundle Website to Single HTML
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Run bundler script
+        run: node bundle-single-html.js
+
+      - name: Upload bundle as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-bundle
+          path: index-bundle.html
+          retention-days: 30
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          files: index-bundle.html
+          tag_name: bundle-${{ github.run_number }}
+          body: 'Self-contained HTML bundle of selam999x.lovable.app'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
