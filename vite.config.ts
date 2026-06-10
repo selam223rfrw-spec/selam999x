@@ -27,10 +27,5 @@ export default defineConfig({
   // GitHub Pages is static-only — switch nitro to the github_pages preset
   // so the build prerenders into .output/public/ instead of producing a
   // Cloudflare Worker bundle that Pages can't run.
-  nitro: isGithubPages
-    ? {
-        preset: "github_pages",
-        prerender: { crawlLinks: true, routes: ["/"] },
-      }
-    : undefined,
+  nitro: isGithubPages ? { preset: "github_pages" } : undefined,
 });
