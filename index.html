@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abdulselam Elahmed — Web Designer & Developer</title>
+  
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+
+  <style>
+    /* دمج ثيم الـ Neo-Brutalism الحقيقي والألوان بدقة oklch من ملف styles.css الخاص بك */
+    :root {
+      --background: oklch(0.96 0.01 95);
+      --foreground: oklch(0 0 0);
+      --card: oklch(1 0 0);
+      --card-foreground: oklch(0 0 0);
+      --muted: oklch(0.92 0.01 95);
+      --muted-foreground: oklch(0.45 0.02 95);
+      
+      /* لوحة الألوان الفاقعة من تصميمك الخاص */
+      --accent: oklch(0.89 0.15 90);      /* الأصفر */
+      --brut-pink: oklch(0.65 0.25 350);  /* الوردي */
+      --brut-blue: oklch(0.55 0.22 260);  /* الأزرق */
+      --brut-green: oklch(0.82 0.21 140); /* الأخضر */
+      --brut-orange: oklch(0.68 0.19 45); /* البرتقالي */
+
+      --border-thick: 4px solid var(--foreground);
+      --shadow-brut: 6px 6px 0 0 var(--foreground);
+      --shadow-brut-lg: 10px 10px 0 0 var(--foreground);
+      --shadow-brut-sm: 3px 3px 0 0 var(--foreground);
+    }
+
+    .dark {
+      --background: oklch(0.16 0.01 280);
+      --foreground: oklch(0.98 0.01 95);
+      --card: oklch(0.22 0.01 280);
+      --card-foreground: oklch(0.98 0.01 95);
+      --muted: oklch(0.26 0.01 280);
+      --muted-foreground: oklch(0.72 0.02 95);
+      --border-thick: 4px solid var(--foreground);
+    }
+
+    /* تطبيق استايلات الخطوط والتنسيقات الهيكلية المأخوذة من الكود المصدري */
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'Thmanyah', system-ui, -apple-system, sans-serif;
+      transition: background-color 0.15s, color 0.15s;
+    }
+
+    /* كلاسات نيو-بروتاليزم المخصصة الثابتة */
+    .border-brut { border: var(--border-thick); }
+    .shadow-brut { box-shadow: var(--shadow-brut); }
+    .shadow-brut-lg { box-shadow: var(--shadow-brut-lg); }
+    .shadow-brut-sm { box-shadow: var(--shadow-brut-sm); }
+
+    /* تأثيرات الضغط والتحويم للأزرار المتطابقة مع صورتك */
+    .btn-brut-active {
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-brut-active:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 8px 8px 0 0 var(--foreground);
+    }
+    .btn-brut-active:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 0 var(--foreground);
+    }
+
+    /* حاوية محاكي الفيزياء */
+    #canvas-container canvas {
+      border: var(--border-thick) !important;
+      box-shadow: var(--shadow-brut);
+      background: var(--card) !important;
+      width: 100% !important;
+      height: 350px !important;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+  <header class="max-w-[1320px] mx-auto mb-12 p-4 md:p-5 bg-[var(--card)] border-brut shadow-brut flex justify-between items-center relative z-50">
+    <a href="#" class="flex items-center gap-2 text-2xl font-black tracking-tighter">
+      <i data-lucide="sparkles" class="w-6 h-6 fill-[var(--accent)] text-black"></i>
+      <span>SELAM</span>
+    </a>
+    
+    <nav class="hidden md:flex items-center gap-8 font-black text-lg">
+      <a href="#work" class="hover:underline decoration-[var(--accent)] decoration-4" id="nav-work">الأعمال</a>
+      <a href="#about" class="hover:underline decoration-[var(--brut-pink)] decoration-4" id="nav-about">عني</a>
+      <a href="#services" class="hover:underline decoration-[var(--brut-green)] decoration-4" id="nav-services">الخدمات</a>
+      <a href="#physics-section" class="hover:underline decoration-[var(--brut-blue)] decoration-4" id="nav-stack">الأدوات</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <button id="theme-toggle" class="p-3 bg-[var(--card)] border-brut shadow-brut-sm cursor-pointer hover:bg-[var(--muted)]">
+        <i data-lucide="moon" class="w-5 h-5 text-[var(--foreground)]"></i>
+      </button>
+      <button id="lang-toggle" class="px-4 py-2 bg-[var(--accent)] text-black border-brut shadow-brut-sm font-black cursor-pointer flex items-center gap-2">
+        <i data-lucide="globe" class="w-4 h-4"></i>
+        <span id="lang-text">EN</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-[1320px] mx-auto">
+    <section class="bg-[var(--card)] border-brut shadow-brut-lg p-8 md:p-20 text-center mb-12 relative">
+      <div class="inline-block bg-[var(--foreground)] text-[var(--background)] px-4 py-1.5 font-black text-xs md:text-sm tracking-widest uppercase mb-8 border border-current" id="hero-kicker">
+        مصمم ومطور ويب · 2026
+      </div>
+      
+      <h1 class="text-4xl md:text-8xl font-black uppercase tracking-tight leading-none mb-10 flex flex-wrap justify-center gap-4">
+        <span class="bg-white text-black px-5 py-2 border-brut" id="l1">أصمم</span>
+        <span class="bg-[var(--accent)] text-black px-5 py-2 border-brut transform -rotate-1 inline-block" id="l2">وأبني</span>
+        <span class="bg-white text-black px-5 py-2 border-brut" id="l3">مواقع.</span>
+      </h1>
+
+      <p class="text-lg md:text-2xl max-w-3xl mx-auto mb-10 font-medium text-[var(--muted-foreground)] leading-relaxed" id="hero-desc">
+        أنا عبدالسلام الأحمد — مصمم ومطور ويب أبني مواقع جريئة بأسلوب نيو-بروتاليزم ومتاجر وتطبيقات سريعة ومُحسَّنة للتحويل.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-4 mb-14">
+        <a href="#work" class="px-8 py-4 bg-[var(--brut-green)] text-black font-black text-xl border-brut shadow-brut btn-brut-active flex items-center gap-3 no-underline" id="cta-work">
+          <span>شاهد أعمالي</span> <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+        </a>
+        <a href="mailto:hougjgrxkj@gmail.com" class="px-8 py-4 bg-transparent text-[var(--foreground)] font-black text-xl border-brut shadow-brut btn-brut-active no-underline" id="cta-hire">
+          وظّفني
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-10 border-t-4 border-[var(--foreground)]">
+        <div class="p-4">
+          <div class="text-5xl md:text-7xl font-black mb-1">06+</div>
+          <div class="font-black text-[var(--muted-foreground)] text-sm md:text-base uppercase" id="stat-1">سنوات برمجة</div>
+        </div>
+        <div class="p-4 border-y-4 md:border-y-0 md:border-x-4 border-[var(--foreground)]">
+          <div class="text-5xl md:text-7xl font-black mb-1">40+</div>
+          <div class="font-black text-[var(--muted-foreground)] text-sm md:text-base uppercase" id="stat-2">موقع منشور</div>
+        </div>
+        <div class="p-4">
+          <div class="text-5xl md:text-7xl font-black mb-1">25+</div>
+          <div class="font-black text-[var(--muted-foreground)] text-sm md:text-base uppercase" id="stat-3">عميل سعيد</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+      
+      <section class="lg:col-span-7 bg-[var(--card)] border-brut shadow-brut p-6 md:p-8 relative pt-12" id="about">
+        <div class="absolute -top-5 right-6 bg-[var(--brut-pink)] text-white font-black px-5 py-1.5 border-brut text-xs tracking-wider uppercase" id="tag-about">نبذة</div>
+        
+        <div class="flex items-center gap-4 mb-8">
+          <div class="w-20 h-20 border-brut shadow-brut-sm overflow-hidden bg-[var(--accent)] shrink-0">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <h2 class="text-2xl md:text-3xl font-black tracking-tight">Abdulselam Elahmed</h2>
+            <p class="font-bold text-[var(--brut-pink)] text-sm md:text-base">Web Designer & Developer</p>
+          </div>
+        </div>
+
+        <h3 class="text-3xl font-black mb-4" id="about-h">مرحباً</h3>
+        <p class="text-lg text-[var(--muted-foreground)] leading-relaxed mb-8 text-justify font-medium" id="about-body">
+          أنا عبدالسلام الأحمد. أصمم وأطوّر المواقع من البداية للنهاية — من أول مخطط حتى آخر نشر. أركّز على الوضوح والسرعة والشخصية. لا قوالب جاهزة ولا حشو.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a href="mailto:hougjgrxkj@gmail.com" class="p-4 bg-[var(--background)] border-brut font-black flex items-center gap-3 hover:bg-[var(--accent)] hover:text-black transition-colors text-sm truncate no-underline">
+            <i data-lucide="mail" class="w-5 h-5 shrink-0"></i> <span>hougjgrxkj@gmail.com</span>
+          </a>
+          <a href="tel:+905411442870" class="p-4 bg-[var(--background)] border-brut font-black flex items-center gap-3 hover:bg-[var(--brut-green)] hover:text-black transition-colors text-sm no-underline">
+            <i data-lucide="phone" class="w-5 h-5 shrink-0"></i> <span>+90 541 144 2870</span>
+          </a>
+          <a href="https://instagram.com/selam9x" target="_blank" class="p-4 bg-[var(--background)] border-brut font-black flex items-center gap-3 hover:bg-[var(--brut-pink)] hover:text-white transition-colors text-sm no-underline">
+            <i data-lucide="instagram" class="w-5 h-5 shrink-0"></i> <span>@selam9x</span>
+          </a>
+          <a href="https://github.com/Parasayte" target="_blank" class="p-4 bg-[var(--background)] border-brut font-black flex items-center gap-3 hover:bg-[var(--brut-blue)] hover:text-white transition-colors text-sm no-underline">
+            <i data-lucide="github" class="w-5 h-5 shrink-0"></i> <span>github.com/Parasayte</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="lg:col-span-5 bg-[var(--card)] border-brut shadow-brut p-6 md:p-8 relative pt-12" id="physics-section">
+        <div class="absolute -top-5 right-6 bg-[var(--brut-blue)] text-white font-black px-5 py-1.5 border-brut text-xs uppercase" id="tag-stack">المنظومة تفاعلية</div>
+        <h3 class="text-2xl font-black mb-2" id="stack-h">أدواتي الرقمية</h3>
+        <p class="text-[var(--muted-foreground)] mb-6 text-sm font-medium" id="stack-p">امسك الأقراص بمؤشر الفأرة وقم برميها لتجربة تفاعلية ممتعة تعكس بيئتي البرمجية!</p>
+        
+        <div id="canvas-container" class="w-full relative overflow-hidden rounded-none">
+          </div>
+      </section>
+    </div>
+
+    <section class="mb-16 py-6" id="services">
+      <h2 class="text-4xl font-black text-center mb-12" id="services-h">ماذا أقدم لعملائي</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-8 bg-[var(--accent)] text-black border-brut shadow-brut">
+          <i data-lucide="palette" class="w-12 h-12 mb-5 stroke-2"></i>
+          <h3 class="text-2xl font-black mb-3" id="svc-t1">تصميم واجهات فريدة</h3>
+          <p class="font-bold text-sm leading-relaxed opacity-90" id="svc-d1">مواقع ذات هوية بصرية متميزة وجريئة مبنية بالكامل في Figma ومخططة لجذب الانتباه.</p>
+        </div>
+        <div class="p-8 bg-[var(--brut-pink)] text-white border-brut shadow-brut">
+          <i data-lucide="code-2" class="w-12 h-12 mb-5 stroke-2"></i>
+          <h3 class="text-2xl font-black mb-3" id="svc-t2">تطوير ويب حديث</h3>
+          <p class="font-bold text-sm leading-relaxed opacity-90" id="svc-d2">باستخدام برواز العمل React و Next.js مع لغة TypeScript لبناء واجهات خارقة السرعة ومتوافقة مع السيو.</p>
+        </div>
+        <div class="p-8 bg-[var(--brut-green)] text-black border-brut shadow-brut">
+          <i data-lucide="rocket" class="w-12 h-12 mb-5 stroke-2"></i>
+          <h3 class="text-2xl font-black mb-3" id="svc-t3">متاجر إلكترونية متكاملة</h3>
+          <p class="font-bold text-sm leading-relaxed opacity-90" id="svc-d3">منصات شوبيفاي ومتاجر مخصصة مهيأة برمجياً لرفع نسبة التحويل والمبيعات بشكل مضاعف.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12 py-4" id="work">
+      <div class="mb-10">
+        <h2 class="text-4xl font-black tracking-tight" id="work-h">أعمال مختارة</h2>
+        <p class="text-[var(--muted-foreground)] mt-2 font-medium" id="work-p">مواقع وتطبيقات حديثة قمت بتصميمها وتطويرها.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="projects-grid">
+        </div>
+    </section>
+  </main>
+
+  <footer class="bg-black text-white p-8 md:p-16 border-brut max-w-[1320px] mx-auto mt-24">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 pb-12 border-b border-zinc-8xl">
+      <div class="lg:col-span-6">
+        <h3 class="text-3xl md:text-5xl font-black text-[var(--accent)] mb-4" id="f-h">لنبنِ موقعك القادم معاً.</h3>
+        <p class="text-zinc-400 max-w-md mb-8 font-medium text-base" id="f-p">متاح حالياً لاستقبال مشاريع جديدة كعمل حر حول العالم وصناعة هويات رقمية فريدة.</p>
+        <div class="flex gap-4">
+          <a href="https://instagram.com/selam9x" target="_blank" class="w-12 h-12 bg-zinc-900 border border-zinc-700 rounded-full flex items-center justify-center text-white hover:bg-[var(--accent)] hover:text-black transition-all"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+          <a href="https://github.com/Parasayte" target="_blank" class="w-12 h-12 bg-zinc-900 border border-zinc-700 rounded-full flex items-center justify-center text-white hover:bg-[var(--accent)] hover:text-black transition-all"><i data-lucide="github" class="w-5 h-5"></i></a>
+          <a href="#" class="w-12 h-12 bg-zinc-900 border border-zinc-700 rounded-full flex items-center justify-center text-white hover:bg-[var(--accent)] hover:text-black transition-all"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+        </div>
+      </div>
+      <div class="lg:col-span-3">
+        <h4 class="text-xs font-black tracking-widest text-zinc-500 uppercase mb-5" id="f-n1">التنقل السريع</h4>
+        <ul class="space-y-3 font-bold text-zinc-300 no-underline list-none p-0">
+          <li><a href="#work" class="hover:text-[var(--accent)] no-underline">الأعمال</a></li>
+          <li><a href="#about" class="hover:text-[var(--accent)] no-underline">عني</a></li>
+          <li><a href="#services" class="hover:text-[var(--accent)] no-underline">الخدمات</a></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-3">
+        <h4 class="text-xs font-black tracking-widest text-zinc-500 uppercase mb-5" id="f-n2">قنوات الاتصال</h4>
+        <ul class="space-y-3 text-zinc-400 text-sm list-none p-0 font-medium">
+          <li>hougjgrxkj@gmail.com</li>
+          <li>+90 541 144 2870</li>
+          <li>تركيا / العمل عن بعد</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-8 flex flex-wrap justify-between text-xs text-zinc-500 font-bold">
+      <p>© 2026 Abdulselam Elahmed. <span id="f-copy">جميع الحقوق محفوظة.</span></p>
+      <p>Tailwind V4 Core Architecture Engine</p>
+    </div>
+  </footer>
+
+  <script>
+    // قاموس اللغات الثلاثية والبيانات المستخرجة حرفياً من ملف المكونات index.tsx
+    const transDB = {
+      en: {
+        work: "Work", about: "About", services: "Services", stack: "Stack",
+        kicker: "WEB DESIGNER · DEVELOPER · 2026",
+        hl1: "I DESIGN", hl2: "& BUILD", hl3: "WEBSITES.",
+        desc: "I'm Abdulselam Elahmed — a web designer and developer crafting bold neo-brutalist sites, e-commerce stores and web apps that load fast and convert.",
+        cw: "See my work", ch: "Hire me", s1: "Years coding", s2: "Sites shipped", s3: "Happy clients",
+        tab_ab: "ABOUT ME", hello: "Hello There",
+        ab_body: "I'm Abdulselam Elahmed. I design and build websites end-to-end — from the first wireframe to the last deploy. My work focuses on clarity, speed, and personality.",
+        tab_st: "LIVE ENGINE", st_h: "Interactive Stack", st_p: "Grab tags with your mouse pointer and throw them around!",
+        sv_h: "What I Can Do For You",
+        st1: "Web Design", sd1: "Bold, unique brand sites — wireframes, UI design, prototypes in Figma.",
+        st2: "Development", sd2: "React, Next.js, TypeScript, Tailwind. Fast, accessible, SEO-ready.",
+        st3: "E-commerce", sd3: "Shopify and headless storefronts — designed and built to convert.",
+        w_h: "Selected Work", w_p: "Recent websites and web apps I designed and built.",
+        fh: "Let's build your next website.", fp: "Available for freelance web design and development projects worldwide.",
+        fn1: "Navigation", fn2: "Contact Channel", fcopy: "All rights reserved."
+      },
+      ar: {
+        work: "الأعمال", about: "عني", services: "الخدمات", stack: "الأدوات",
+        kicker: "مصمم ومطور ويب · 2026",
+        hl1: "أصمم", hl2: "وأبني", hl3: "مواقع.",
+        desc: "أنا عبدالسلام الأحمد — مصمم ومطور ويب أبني مواقع جريئة بأسلوب نيو-بروتاليزم ومتاجر وتطبيقات سريعة ومُحسَّنة للتحويل.",
+        cw: "شاهد أعمالي", ch: "وظّفني", s1: "سنوات برمجة", s2: "موقع منشور", s3: "عميل سعيد",
+        tab_ab: "نبذة", hello: "مرحباً بكم",
+        ab_body: "أنا عبدالسلام الأحمد. أصمم وأطوّر المواقع من البداية للنهاية — من أول مخطط حتى آخر نشر. أركّز على الوضوح والسرعة والشخصية. لا قوالب جاهزة ولا حشو.",
+        tab_st: "منظومة تفاعلية", st_h: "الأدوات الرقمية", st_p: "امسك الأقراص بمؤشر الفأرة وقم برميها لتجربة تفاعلية ممتعة تعكس بيئتي البرمجية!",
+        sv_h: "ماذا أقدم لعملائي",
+        st1: "تصميم واجهات فريدة", sd1: "موقع ذات هوية بصرية متميزة وجريئة مبنية بالكامل في Figma ومخططة لجذب الانتباه.",
+        st2: "تطوير ويب حديث", sd2: "باستخدام برواز العمل React و Next.js مع لغة TypeScript لبناء واجهات خارقة السرعة ومتوافقة مع السيو.",
+        st3: "متاجر إلكترونية متكاملة", sd3: "منصات شوبيفاي ومتاجر مخصصة مهيأة برمجياً لرفع نسبة التحويل والمبيعات بشكل مضاعف.",
+        w_h: "أعمال مختارة", w_p: "مواقع وتطبيقات حديثة قمت بتصميمها وتطويرها.",
+        fh: "لنبنِ موقعك القادم معاً.", fp: "متاح حالياً لاستقبال مشاريع جديدة كعمل حر حول العالم وصناعة هويات رقمية فريدة.",
+        fn1: "التنقل السريع", fn2: "قنوات الاتصال", fcopy: "جميع الحقوق محفوظة."
+      },
+      tr: {
+        work: "Çalışmalar", about: "Hakkımda", services: "Hizmetler", stack: "Yetkinlikler",
+        kicker: "WEB TASARIMCI · GELİŞTİRİCİ · 2026",
+        hl1: "TASARLAR", hl2: "& İNŞA", hl3: "EDERİM.",
+        desc: "Ben Abdulselam Elahmed — cesur neo-brutalist siteler, e-commerce mağazaları ve hızlı yüklenen dönüşüm odaklı web uygulamaları geliştiren bir web tasarımcısı ve geliştiricisiyim.",
+        cw: "Çalışmalarımı gör", ch: "Bana ulaş", s1: "Yıllık Kodlama", s2: "Biten Proje", s3: "Mutlu Müşteri",
+        tab_ab: "HAKKIMDA", hello: "Merhaba",
+        ab_body: "Ben Abdulselam Elahmed. Web sitelerini baştan sona tasarlar ve geliştiririm — ilk tel kafesten son kuruluma kadar. İşlerim netlik, hız ve kişiselliğe odaklanır.",
+        tab_st: "CANLI MOTOR", st_h: "Teknoloji Havuzu", st_p: "Etiketleri farenizle yakalayın ve etrafa fırlatın!",
+        sv_h: "Neler Yapıyorum",
+        st1: "Web Tasarımı", sd1: "Figma üzerinde tasarlanmış, dikkat çekici, cesur ve benzersiz marka siteleri.",
+        st2: "Web Geliştirme", sd2: "React, Next.js, TypeScript ve Tailwind kullanarak hızlı ve SEO uyumlu arayüzler.",
+        st3: "E-Ticaret", sd3: "Dönüşüm oranlarını artırmak üzere optimize edilmiş Shopify ve headless mağazalar.",
+        w_h: "Seçili Çalışmalar", w_p: "Yakın zamanda tasarladığım ve geliştirdiğim web siteleri.",
+        fh: "Bir sonraki web sitenizi inşa edelim.", fp: "Dünya çapında serbest web tasarımı ve geliştirme projeleri için uygundur.",
+        fn1: "Hızlı Menü", fn2: "İletişim Kanalı", fcopy: "Tüm hakları saklıdır."
+      }
+    };
+
+    const projectsMockData = [
+      { num: "01", title: { en: "Brutalist Bakery", ar: "مخبز بروتاليست", tr: "Brutalist Fırın" }, year: "2026", tags: ["Web Design", "Shopify"], img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80" },
+      { num: "02", title: { en: "Studio Kairos", ar: "ستوديو كايروس", tr: "Studio Kairos" }, year: "2025", tags: ["Next.js", "CMS"], img: "https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=for
