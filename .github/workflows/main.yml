@@ -36,9 +36,11 @@ jobs:
         run: bun install
 
       - name: Build (static, GitHub Pages preset)
-        run: bun run build:pages
+        run: bun run build  # 🌟 FIXED: Changed from build:pages to build
         env:
           GITHUB_PAGES: 'true'
+          # Nitro config tip: force the github-pages static preset explicitly
+          NITRO_PRESET: github-pages 
 
       - name: Ensure .nojekyll
         run: touch .output/public/.nojekyll
