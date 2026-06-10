@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -38,7 +37,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    console.error("Root error boundary caught:", error);
   }, [error]);
 
   return (
@@ -77,23 +76,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Deployment Delight automates and resolves common deployment challenges for applications." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Deployment Delight automates and resolves common deployment challenges for applications." },
+      { title: "Parasayte — Creative Engineer" },
+      { name: "description", content: "Personal portfolio of Parasayte, a Creative Engineer." },
+      { name: "author", content: "Parasayte" },
+      { property: "og:title", content: "Parasayte — Creative Engineer" },
+      { property: "og:description", content: "Personal portfolio of Parasayte, a Creative Engineer." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Deployment Delight automates and resolves common deployment challenges for applications." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8639a281-c693-44d9-a901-67ebc8544626/id-preview-dd2c1cd9--ecb6f8e3-0e56-454e-8bb0-57e03f7257ef.lovable.app-1781092496167.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8639a281-c693-44d9-a901-67ebc8544626/id-preview-dd2c1cd9--ecb6f8e3-0e56-454e-8bb0-57e03f7257ef.lovable.app-1781092496167.png" },
+      { name: "twitter:title", content: "Parasayte — Creative Engineer" },
+      { name: "twitter:description", content: "Personal portfolio of Parasayte, a Creative Engineer." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f770b72b-dc0c-4c9e-920a-9320ff2552e9/id-preview-b7bd1ba7--1e8732c8-001e-4a26-bb3f-3fc456ee61f2.lovable.app-1781032042989.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f770b72b-dc0c-4c9e-920a-9320ff2552e9/id-preview-b7bd1ba7--1e8732c8-001e-4a26-bb3f-3fc456ee61f2.lovable.app-1781032042989.png" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Syne:wght@700;800&display=swap",
       },
     ],
   }),
@@ -122,7 +123,6 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
   );
