@@ -8,30 +8,47 @@ on:
 jobs:
   bundle:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
+
+      - name: Install dependencies (if needed)
+        run: |
+          npm install
 
       - name: Run bundler script
-        run: node bundle-single-html.js
+        run: |
+          node bundle-single-html.js
+          echo "📦 Checking generated file..."
+          ls -la
+          test -f index-bundle.html
+
+      - name: Fail if bundle missing
+        run: |
+          if [ ! -f index-bundle.html ]; then
+            echo "❌ index-bundle.html not found!"
+            exit 1
+          fi
 
       - name: Upload bundle as artifact
         uses: actions/upload-artifact@v4
         with:
           name: website-bundle
-          path: index-bundle.html
+          path: ./index-bundle.html
           retention-days: 30
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: github.event_name == 'workflow_dispatch'
         with:
-          files: index-bundle.html
           tag_name: bundle-${{ github.run_number }}
-          body: 'Self-contained HTML bundle of selam999x.lovable.app'
+          files: index-bundle.html
+          body: "Self-contained HTML bundle of selam999x.lovable.app"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
